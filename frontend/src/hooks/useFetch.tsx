@@ -1,26 +1,58 @@
 import { useEffect, useState } from "react";
 
-type SearchFunction = (signal: AbortSignal) => Promise<Response>;
+type URL = string;
 
-function useFetch<T>(searchFn: SearchFunction) {
+type FetchError = {
+    status: number,
+    error: string,
+}
 
-    const [error, setError] = useState(null);
+type FetchResult<T> = {
+    data: T | null,
+    error: FetchError | null,
+    loading: boolean,
+    refetch: () => void
+}
+
+const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+}
+
+function useFetch<T>(url: URL): FetchResult<T> {
+
+    const [trigger, setTrigger] = useState({});
+    const [data, setData] = useState<T | null>(null);
+    const [error, setError] = useState<FetchError | null>(null);
     const [loading, setLoading] = useState(false);
-    const [response, setResponse] = useState<T | null>(null);
 
 
     useEffect(() => {
         let mounted = true;
         const controller = new AbortController();
 
-        const fetchData = async () => {
+        const fetchData = () => {
 
-            try {
-                const res = await searchFn(controller.signal);
-                console.log(res);
-            }
-            catch (err) {
-            }
+            setLoading(true);
+            fetch('http://localhost:9090' + url, { signal: controller.signal, headers: headers })
+                .then(res => res.json())
+                .then(res => {
+                    if (mounted) {
+                        setError(null);
+                        setData(res);
+                    }
+                })
+                .catch(err => {
+                    if (mounted) {
+                        setError(err);
+                        setData(null);
+                    }
+                })
+                .finally(() => {
+                    if (mounted) {
+                        setLoading(false);
+                    }
+                })
         }
 
         fetchData();
@@ -30,12 +62,13 @@ function useFetch<T>(searchFn: SearchFunction) {
             controller.abort();
         }
 
-    }, []);
+    }, [trigger]);
 
     return {
         error,
         loading,
-        response
+        data,
+        refetch: () => setTrigger({})
     }
 }
 
