@@ -1,35 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
-import { BookType, categoryOptions, CategoryType } from "../types";
-import { AuthorType } from "../types";
+import BookService from "../services/BookService";
+import { categoryOptions, CategoryType } from "../types";
+import { AuthorType } from "../types/authors";
+import { BookType } from "../types/books";
 
 type AddBookType = {
     name: BookType['name'],
-    availableCopies: BookType['availableCopies'],
-
-    author: AuthorType['id'],
-    category: CategoryType
+    availableCopies?: BookType['availableCopies'],
+    author?: AuthorType['id'],
+    category?: CategoryType
 }
 
+const initState: AddBookType = {
+    name: "",
+    availableCopies: undefined,
+    author: undefined,
+    category: categoryOptions.at(0)
+}
 
 const AddBook: React.FC = () => {
 
     const { data } = useFetch<AuthorType[]>('/api/authors');
 
-    const [book, setBook] = useState({} as AddBookType);
+    const [book, setBook] = useState(initState);
 
+    useEffect(() => {
+        setBook((prev) => ({ ...prev, author: data?.at(0)?.id }))
+    }, [data]);
 
-    const handleChange = () => {
-
-    }
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        if (book.availableCopies && book.author && book.category) {
+            await BookService.add({
+                name: book.name,
+                author: book.author,
+                category: book.category,
+                availableCopies: book.availableCopies
+            });
+
+            setBook(initState)
+        }
     }
 
     return (
         <div className="flex justify-center">
+            <button onClick={() => setBook((prev) => ({ ...prev, author: '' }))}>Test</button>
             <form className="flex flex-col gap-y-2" onSubmit={handleSubmit}>
                 <label className="flex flex-col font-semibold text-sm">
                     Name:
@@ -53,10 +70,11 @@ const AddBook: React.FC = () => {
                 <label className="flex flex-col font-semibold text-sm">
                     Author:
                     <select
-                        value={book.author}
+                        value={book.author ?? ""}
                         className="border border-black rounded-sm outline-none py-1 px-1"
                         onChange={(e) => setBook((prev) => ({ ...prev, author: parseInt(e.target.value) }))}
                     >
+                        <option style={{ display: 'none' }}></option>
                         {data?.map(author => <option key={author.id} value={author.id}>{author.name} {author.surname}</option>)}
                     </select>
                 </label>
@@ -65,7 +83,7 @@ const AddBook: React.FC = () => {
                     <input
                         type="number"
                         className="border border-black outline-none py-1 px-1 rounded-sm"
-                        value={book.availableCopies}
+                        value={book.availableCopies || ''}
                         onChange={(e) => setBook((prev) => ({ ...prev, availableCopies: parseInt(e.target.value) }))}
                     />
                 </label>

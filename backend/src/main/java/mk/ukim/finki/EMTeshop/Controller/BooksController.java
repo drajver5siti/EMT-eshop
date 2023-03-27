@@ -25,6 +25,15 @@ public class BooksController {
         return this.books.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> get(
+            @PathVariable Long id
+    ) {
+        return this.books.findById(id)
+                .map(book -> ResponseEntity.ok().body(book))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
     @PostMapping
     public ResponseEntity<Book> create(
             @RequestBody BookDTO bookDTO

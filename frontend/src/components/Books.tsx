@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 import BookService from '../services/BookService';
-import { BookType } from '../types';
+import { BookType } from '../types/books';
 import Book from './Book';
 
 const Books = () => {
@@ -11,7 +11,7 @@ const Books = () => {
     const { loading, error, data, refetch } = useFetch<BookType[]>('/api/books');
 
     const handleEdit = (id: BookType['id']) => {
-        navigate('/books/' + id);
+        navigate('/books/edit/' + id);
     }
 
     const handleTake = async (id: BookType['id']) => {

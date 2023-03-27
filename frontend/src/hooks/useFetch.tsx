@@ -43,6 +43,7 @@ function useFetch<T>(url: URL): FetchResult<T> {
                     }
                 })
                 .catch(err => {
+                    if (controller.signal.aborted) return;
                     if (mounted) {
                         setError(err);
                         setData(null);

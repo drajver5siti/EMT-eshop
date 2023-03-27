@@ -10,6 +10,12 @@ const NavBar: React.FC = () => {
                 <li>
                     <Link to="/categories">Categories</Link>
                 </li>
+                <li>
+                    <Link to="/authors/add">Add Author</Link>
+                </li>
+                <li>
+                    <Link to="/countries/add">Add Country</Link>
+                </li>
             </ul>
         </nav>
     )

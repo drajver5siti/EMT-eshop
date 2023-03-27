@@ -1,4 +1,4 @@
-import { BookType } from "../types"
+import { BookType } from "../types/books";
 
 type Props = BookType & {
     onEdit: (id: BookType['id']) => void,
