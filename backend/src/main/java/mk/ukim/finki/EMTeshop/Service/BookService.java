@@ -9,6 +9,11 @@ import java.util.Optional;
 
 public interface BookService {
     List<Book> findAll();
+    Optional<Book> findById(Long id);
 
     Optional<Book> save(BookDTO bookDTO);
+    Optional<Book> edit(Long id, BookDTO bookDTO);
+
+    void take(Long id);
+    void deleteById(Long id);
 }

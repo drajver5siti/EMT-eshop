@@ -6,6 +6,7 @@ import mk.ukim.finki.EMTeshop.Repository.CountryRepository;
 import mk.ukim.finki.EMTeshop.Service.CountryService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +16,11 @@ public class CountryServiceImpl implements CountryService {
 
     public CountryServiceImpl(CountryRepository countries) {
         this.countries = countries;
+    }
+
+    @Override
+    public List<Country> findAll() {
+        return this.countries.findAll();
     }
 
     @Override

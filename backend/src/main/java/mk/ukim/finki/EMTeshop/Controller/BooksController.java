@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/api/books")
 public class BooksController {
 
@@ -33,4 +34,36 @@ public class BooksController {
                 .map(book -> ResponseEntity.ok().body(book))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> update(
+            @PathVariable Long id,
+            @RequestBody BookDTO bookDTO
+    ) {
+        return this.books.edit(id, bookDTO)
+                .map(book -> ResponseEntity.ok().body(book))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping("/{id}/take")
+    public ResponseEntity take(
+            @PathVariable Long id
+    ) {
+        this.books.take(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(
+            @PathVariable Long id
+    ) {
+        this.books.deleteById(id);
+
+        if(this.books.findById(id).isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
 }

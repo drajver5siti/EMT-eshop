@@ -6,6 +6,7 @@ import mk.ukim.finki.EMTeshop.Enum.Category;
 
 @Data
 @Entity
+@Table(name = "books")
 public class Book {
 
     @Id
