@@ -14,9 +14,9 @@ const Categories: React.FC = () => {
     }
 
     return (
-        <>
-            {data?.map(category => <div key={category}>{category}</div>)}
-        </>
+        <div className="flex flex-col items-center">
+            {data?.map(category => <div className="flex justify-center border 1px solid black w-1/12" key={category}>{category}</div>)}
+        </div>
     )
 }
 

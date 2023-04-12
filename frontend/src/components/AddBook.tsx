@@ -46,7 +46,6 @@ const AddBook: React.FC = () => {
 
     return (
         <div className="flex justify-center">
-            <button onClick={() => setBook((prev) => ({ ...prev, author: '' }))}>Test</button>
             <form className="flex flex-col gap-y-2" onSubmit={handleSubmit}>
                 <label className="flex flex-col font-semibold text-sm">
                     Name:

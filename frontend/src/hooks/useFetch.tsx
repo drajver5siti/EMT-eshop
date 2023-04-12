@@ -11,7 +11,12 @@ type FetchResult<T> = {
     data: T | null,
     error: FetchError | null,
     loading: boolean,
-    refetch: () => void
+    refetch: (query?: Query) => void
+}
+
+type Query = {
+    page: number,
+    size: number
 }
 
 const headers = {
@@ -19,12 +24,13 @@ const headers = {
     'Access-Control-Allow-Origin': '*',
 }
 
-function useFetch<T>(url: URL): FetchResult<T> {
+function useFetch<T>(url: URL, initQuery?: Query): FetchResult<T> {
 
     const [trigger, setTrigger] = useState({});
     const [data, setData] = useState<T | null>(null);
     const [error, setError] = useState<FetchError | null>(null);
     const [loading, setLoading] = useState(false);
+    const [query, setQuery] = useState(initQuery);
 
 
     useEffect(() => {
@@ -34,7 +40,11 @@ function useFetch<T>(url: URL): FetchResult<T> {
         const fetchData = () => {
 
             setLoading(true);
-            fetch('http://localhost:9090' + url, { signal: controller.signal, headers: headers })
+            let api = "http://localhost:9090" + url;
+            if (query) {
+                api = api + "?page=" + query.page + "&size=" + query.size;
+            }
+            fetch(api, { signal: controller.signal, headers: headers })
                 .then(res => res.json())
                 .then(res => {
                     if (mounted) {
@@ -63,13 +73,20 @@ function useFetch<T>(url: URL): FetchResult<T> {
             controller.abort();
         }
 
-    }, [trigger]);
+    }, [trigger, query]);
 
     return {
         error,
         loading,
         data,
-        refetch: () => setTrigger({})
+        refetch: (query) => {
+            if (query) {
+                setQuery(query);
+            }
+            else {
+                setTrigger({})
+            }
+        }
     }
 }
 
