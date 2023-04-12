@@ -9,6 +9,8 @@ import mk.ukim.finki.EMTeshop.Model.Book;
 import mk.ukim.finki.EMTeshop.Repository.AuthorRepository;
 import mk.ukim.finki.EMTeshop.Repository.BookRepository;
 import mk.ukim.finki.EMTeshop.Service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> findAll() {
-        return this.books.findAll();
+    public Page<Book> findAll(Pageable pageable) {
+        return this.books.findAll(pageable);
     }
 
     @Override

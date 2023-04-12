@@ -4,6 +4,9 @@ import mk.ukim.finki.EMTeshop.DTO.BookDTO;
 import mk.ukim.finki.EMTeshop.Enum.Category;
 import mk.ukim.finki.EMTeshop.Model.Book;
 import mk.ukim.finki.EMTeshop.Service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +24,8 @@ public class BooksController {
     }
 
     @GetMapping
-    public List<Book> index() {
-        return this.books.findAll();
+    public Page<Book> index(Pageable pageable) {
+        return this.books.findAll(pageable);
     }
 
     @GetMapping("/{id}")
